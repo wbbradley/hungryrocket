@@ -36,7 +36,7 @@ class Game
     @inProgress = true
     @frameTimer = setInterval(@tick, @frameInterval)
 
-    @broadcast('startGame')
+    @broadcast('start-game')
 
   fetchFrameState: =>
     state =
@@ -93,7 +93,7 @@ class Game
         
   publishFrameState: =>
     @state = @fetchFrameState()
-    @broadcast('updateGameState', @state)
+    @broadcast('update-game-state', @state)
 
   tick: =>
     @updateFrameState()
