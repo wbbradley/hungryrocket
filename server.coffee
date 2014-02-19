@@ -29,13 +29,16 @@ io.sockets.on 'connection', (socket) =>
     console.log "set name called with #{name}"
     if players[name]
       player = players[name]
-      player.socket = socket
     else
       player.name = name
       player[name] = player
 
     # For now, immediately join a game
-    game.registerPlayer(player)
+    try
+      game.registerPlayer(player)
+    catch error
+      console.log "Failed to register player: #{name}"
+      return
     socket.join(game.id)
     socket.player = player
     player.socket = socket

@@ -50,6 +50,7 @@ class Game
           X: @rocket.position.X
           Y: @rocket.position.Y
         angle: @rocket.angle
+        radius: @rocket.radius
       players: []
 
     for player in @players
@@ -69,9 +70,6 @@ class Game
     @rocket.position.X = @rocket.position.X + xDelta
     @rocket.position.Y = @rocket.position.Y + yDelta
 
-    # Test if rocket is out of bounds
-    outOfBounds = @arena.rocketOutOfBounds(@rocket)
-
     # Sum player contributions
     maxAngle = Math.PI / 32
     angleDelta = 0.0
@@ -82,7 +80,7 @@ class Game
     @rocket.angle = (@rocket.angle + angleDelta) % (2 * Math.PI)
 
     # Calculate any bounces off the walls
-    @rocket.angle = @arena.bounce(@rocket.position, @rocket.angle)
+    @rocket.angle = @arena.bounce(@rocket)
 
     # Find out which player's territory the rocket is over and award this
     # round's points to them
@@ -124,11 +122,11 @@ class Player
 
 class Rocket
   constructor: (opts) ->
-    {@position, @angle, @velocity} = opts ? {}
+    {@position, @angle, @velocity, @radius} = opts ? {}
     @position ?= {X: 0, Y: 0}
     @velocity ?= 10.0
+    @radius ?= 50
     @angle = Math.random() * (2 * Math.PI)
-    @radius ?= 2
 
   toString: =>
     JSON.stringify
@@ -152,29 +150,22 @@ class Arena
 
   # IMPORTANT: Assumes rocket is a circle
   rocketOutOfBounds: (rocket)->
-    return (Math.pow(rocket.X, 2) + Math.pow(rocket.Y, 2)) > Math.pow((@radius - rocket.radius), 2)
+    return (Math.pow(rocket.position.X, 2) + Math.pow(rocket.position.Y, 2)) > Math.pow((@radius - rocket.radius), 2)
 
-  bounce: (position, angle) =>
+  bounce: (rocket) =>
     # Some vector calculations, based on http://stackoverflow.com/a/573206
     # Reversed rocket position is roughly perpendicular to the tangent vector
     # at the circle boundary as the rocket approaches
-    n = Vector.create([-position.X, -position.Y])
-    console.log "DIST: #{dist(n)}"
-    if dist(n) < @radius
-       return angle  # No bounce, we're still in-bounds
-    console.log "n: #{n.e(1)}, #{n.e(2)}"
-    v = angleToVec(angle)
-    console.log "v: #{v.e(1)}, #{v.e(2)}"
+    n = Vector.create([-rocket.position.X, -rocket.position.Y])
+    if not @rocketOutOfBounds(rocket)
+       return rocket.angle  # No bounce, we're still in-bounds
+    v = angleToVec(rocket.angle)
   
     # find reflection given vector n
     u = n.multiply(v.dot(n) / n.dot(n))
-    console.log "u: #{u.e(1)}, #{u.e(2)}"
     w = v.subtract(u)
-    console.log "w: #{w.e(1)}, #{w.e(2)}"
     vNext = w.subtract(u)
-    console.log "v': #{vNext.e(1)}, #{vNext.e(2)}"
     angleNext = angleFromVec(vNext)
-    console.log('BOUNCE!')
     return angleNext
 
 
