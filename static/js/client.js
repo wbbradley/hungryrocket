@@ -1,6 +1,13 @@
 (function() {
-  var Server, server,
+  var Server, globals, server,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  globals = {
+    viewport: {
+      width: 400,
+      height: 400
+    }
+  };
 
   Server = (function() {
     function Server(props) {
@@ -29,8 +36,9 @@
     };
 
     Server.prototype.login = function() {
-      console.log($('#username').val());
-      return this.set_name($('#username').val());
+      var username;
+      username = $('#username').val();
+      return this.set_name(username);
     };
 
     Server.prototype.set_name = function(name) {
@@ -60,5 +68,7 @@
   this.Rocket = {};
 
   this.Rocket.login = server.login;
+
+  this.Rocket.globals = globals;
 
 }).call(this);

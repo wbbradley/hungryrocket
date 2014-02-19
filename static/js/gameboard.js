@@ -1,38 +1,85 @@
-/** @jsx React.DOM */
-var gameboard;
+(function() {
+  var Gameboard, gameboard, test_update;
 
-Gameboard = React.createClass({
-	getInitialState: function () {
-		return {
-			username: null,
-		   	gamestate: null,
-			flag: {
-				width: 1
-			}
-		}
-	},
-	render: function() {
-		return (
-			<div>
-				<h1>Hello {this.state.username}!</h1>
-				<div>gamestate is {this.state.gamestate}</div>
-				<svg xmlns="http://www.w3.org/2000/svg" 
-					 width="150" height="100" viewBox="0 0 3 2">
+  gameboard = null;
 
-					<rect width={this.state.flag.width} height="2" x={this.state.flag.x} fill="#008d46" />
-					<rect width="1" height="2" x="1" fill="#ffffff" />
-					<rect width="1" height="2" x="2" fill="#d2232c" />
-				</svg>
-			</div>
-		);
-	}
-});
+  Gameboard = React.createClass({
+    getInitialState: function() {
+      return {
+        username: null,
+        gamestate: null,
+        arena: {
+          radius: 1000
+        },
+        rocket: {
+          position: {
+            X: 0,
+            Y: 0
+          }
+        }
+      };
+    },
+    view_coord_len: function(x) {
+      return x / (2.0 * this.state.arena.radius) * globals.viewport.width;
+    },
+    arenaViewBox: function() {
+      var arena;
+      arena = this.state.arena;
+      return "" + (-arena.radius) + " " + (-arena.radius) + " " + (arena.radius * 2) + " " + (arena.radius * 2);
+    },
+    render: function() {
+      var button, div, form, g, h1, input, li, rect, svg, ul, _ref;
+      _ref = React.DOM, h1 = _ref.h1, div = _ref.div, svg = _ref.svg, rect = _ref.rect, g = _ref.g, ul = _ref.ul, li = _ref.li, form = _ref.form, input = _ref.input, button = _ref.button;
+      return div({}, [
+        h1({}, ['ello' + this.state.username]), svg({
+          xmlns: "http://www.w3.org/2000/svg",
+          width: Rocket.globals.viewport.width,
+          height: Rocket.globals.viewport.height,
+          viewBox: this.arenaViewBox()
+        }, [
+          rect({
+            width: 100,
+            height: 200,
+            x: this.state.rocket.position.X,
+            y: this.state.rocket.position.Y,
+            fill: "#008d46"
+          }), rect({
+            width: 100,
+            height: 200,
+            x: 1,
+            fill: "#fff"
+          }), rect({
+            width: 100,
+            height: 200,
+            x: 2,
+            fill: "#d2232c"
+          })
+        ])
+      ]);
+    }
+  });
 
-gameboard = Gameboard()
+  gameboard = Gameboard({
+    globals: Rocket.globals
+  });
 
-React.renderComponent(
-	gameboard,
-	document.getElementById('gameboard')
-	);
+  test_update = function() {
+    var timestamp;
+    timestamp = (new Date()).getTime() / 1000.0;
+    return gameboard.setState({
+      rocket: {
+        position: {
+          X: Math.cos(timestamp) * 200,
+          Y: Math.sin(timestamp) * 200
+        }
+      }
+    });
+  };
 
-this.gameboard = gameboard
+  window.setInterval(test_update, 50);
+
+  React.renderComponent(gameboard, document.getElementById('gameboard'));
+
+  this.gameboard = gameboard;
+
+}).call(this);

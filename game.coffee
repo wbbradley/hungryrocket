@@ -15,7 +15,7 @@ class Game
         Y: 0.0
     @players ?= []
 
-    @maxPlayers = 4
+    @maxPlayers = 1
     @inProgress = false
     @frameInterval = 35 # ms
     @frameTimer = null

@@ -1,3 +1,8 @@
+globals =
+	viewport:
+		width: 400
+		height: 400
+
 class Server
   constructor: (props) ->
     @props = props
@@ -15,8 +20,8 @@ class Server
     console.log data
 
   login: =>
-    console.log $('#username').val()
-    @set_name $('#username').val()
+    username = $('#username').val()
+    @set_name username
 
   set_name: (name) =>
     # optimistically set the local name
@@ -34,3 +39,4 @@ server.connect()
 
 @Rocket = {}
 @Rocket.login = server.login
+@Rocket.globals = globals
