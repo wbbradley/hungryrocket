@@ -6,10 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "socket.io": "0.9.16",
-    "express": "3.4.7"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/wbbradley/hungryrocket.git"
@@ -24,6 +20,9 @@
   },
   "homepage": "https://github.com/wbbradley/hungryrocket",
   "dependencies": {
+    "socket.io": "0.9.16",
+    "express": "3.4.7",
+    "ejs": "0.8.5",
     "grunt": "~0.4.2",
     "grunt-contrib-coffee": "~0.10.1",
     "grunt-contrib-less": "~0.9.0",
