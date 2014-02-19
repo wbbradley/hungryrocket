@@ -1,7 +1,9 @@
 express = require 'express'
 port = 3000
-app = express().listen port
-io = require('socket.io').listen app
+app = express()
+server = app.listen port
+io = require('socket.io').listen server
+room = 'the one'
 
 app.set 'views', (__dirname + '/views')
 app.engine '.html', require('ejs').renderFile
@@ -12,7 +14,8 @@ app.get('/', (req, res)=>
 )
 
 io.sockets.on('connection', (socket)=>
-	# DO STUFF
+	socket.join room
+	socket.emit 'connected'
 )
 
 console.log "Listening on port #{port}"

@@ -4,10 +4,11 @@ class Server
 
   connect: (host) =>
     console.log "Connecting..."
+    @socket = io.connect()
+    @setupSocket()
 
-    fake_props =
-      motd: 'Welcome'
-    window.setTimeout((=> @connected(fake_props)), 0)
+  setupSocket: =>
+    @socket.on 'connected', @connected(data)
 
   connected: (server_props) =>
     console.log "Server connected"
