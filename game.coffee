@@ -22,8 +22,8 @@ class Game
     @state = null
     @pointsPerFrame = 100
 
-  publish: (type, data) =>
-    console.log "Publish: #{type}: #{JSON.stringify(data)}"
+  broadcast: (type, data) =>
+    console.log "Broadcast: #{type}: #{JSON.stringify(data)}"
     @sockets.in(@id).emit(type, data)
 
   startGame: =>
@@ -34,7 +34,7 @@ class Game
     @inProgress = true
     @frameTimer = setInterval(@tick, @frameInterval)
 
-    @publish('startGame')
+    @broadcast('startGame')
 
   fetchFrameState: =>
     state =
@@ -84,7 +84,7 @@ class Game
         
   publishFrameState: =>
     @state = @fetchFrameState()
-    @publish('updateGameState', @state)
+    @broadcast('updateGameState', @state)
 
   tick: =>
     @updateFrameState()
