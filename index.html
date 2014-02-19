@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Hungry Rocket</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="shortcut icon" type="image/png" href="/static/img/favicon.png">
+		<link rel="stylesheet" href="/static/main.css" type="text/css">
+	</head>
+	<body>
+		<section id="about">
+			<div class="centering-container">
+				<h1>Hungry Rocket</h1>
+			</div>
+		</section>
+		<script>
+			Math.lerp = Math.lerp || function(a, p1, p2) {
+				return (p2 - p1) * a + p1;
+			};
+			Math.alpha = Math.alpha || function(a, p1, p2) {
+				return (a - p1) / (p2 - p1);
+			};
+			Math.clamp = Math.clamp || function(a, p1, p2) {
+				if (p2 > p1) {
+					if (a < p1) {
+						return p1;
+					} else if (a > p2) {
+						return p2;
+					} else {
+						return a;
+					}
+				} else {
+					if (a < p2) {
+						return p2;
+					} else if (a > p1) {
+						return p1;
+					} else {
+						return a;
+					}
+				}
+			};
+		</script>	
+	</body>
+</html>
