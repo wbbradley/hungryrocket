@@ -1,10 +1,15 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>Hungry Rocket</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="shortcut icon" type="image/png" href="/static/img/favicon.png">
 		<link rel="stylesheet" href="/css/site.css" type="text/css">
+		<script src='/socket.io/socket.io.js'></script>
 		<script src="/js/jquery-2.1.0.min.js"></script>	
+		<script src="/js/react.js"></script>	
+		<script src="/js/JSXTransformer.js"></script>	
+		<script src="/js/client.js"></script>	
 	</head>
 	<body>
 		<section id="login">
@@ -12,6 +17,8 @@
 			<input type="text" id="username" name="username" placeholder="Username"/>
 			<button onclick='Rocket.login()'>I'm a Hungry Rocket!</button>
 		</section>
+		<div id='gameboard'></div>
+		<script type='text/jsx' src='/js/gameboard.js'></script>
 		<script>
 			Math.lerp = Math.lerp || function(a, p1, p2) {
 				return (p2 - p1) * a + p1;
@@ -39,7 +46,5 @@
 				}
 			};
 		</script>	
-		<script src='/socket.io/socket.io.js'></script>
-		<script src="/js/client.js"></script>	
 	</body>
 </html>

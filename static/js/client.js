@@ -34,11 +34,17 @@
     };
 
     Server.prototype.set_name = function(name) {
+      gameboard.setState({
+        username: name
+      });
       return this.socket.emit('set_name', name);
     };
 
     Server.prototype.update_game_state = function(game_state) {
-      return console.dir(game_state);
+      console.dir(game_state);
+      return gameboard.setState({
+        gamestate: name
+      });
     };
 
     return Server;

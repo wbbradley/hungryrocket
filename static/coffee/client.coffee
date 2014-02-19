@@ -19,11 +19,13 @@ class Server
     server.set_name $('#username').val()
 
   set_name: (name)=>
-    # TODO(mrjaeger): call the server
+    # optimistically set the local name
+    gameboard.setState({username: name})
     @socket.emit 'set_name', name
 
   update_game_state: (game_state) =>
     console.dir game_state
+    gameboard.setState({gamestate: name})
 
 server = new Server()
 server.connect()
