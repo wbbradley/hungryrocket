@@ -18,10 +18,12 @@ class Server
     console.log $('#username').val()
     @set_name $('#username').val()
 
-  set_name: (name)=>
+  set_name: (name) =>
     # optimistically set the local name
+    console.log "calling server set-name with #{name}"
     gameboard.setState({username: name})
-    @socket.emit 'set_name', name
+    console.log "calling server set-name with #{name}"
+    @socket.emit 'set-name', name
 
   update_game_state: (game_state) =>
     console.dir game_state

@@ -17,24 +17,25 @@ game = new games.Game
   sockets: io.sockets
 
 io.sockets.on('connection', (socket) =>
-    player = new games.Player()
-    player.socket = socket
+  console.log "Connection established"
 
-    socket.on 'join game', (data) ->
-      game = '' # TODO: get game based on data
-      game.registerPlayer(player)
-      socket.join(game.id)
-      socket.player = player
-      player.game = game
+  player = new games.Player()
+  player.socket = socket
+  socket.on 'join-game', (data) ->
+    game.registerPlayer(player)
+    socket.join(game.id)
+    socket.player = player
+    player.game = game
 
-    socket.on 'set name', (name) ->
-      player.name = name
-	  # TODO: broadcast name to to other players?
+  socket.on 'set-name', (name) ->
+    console.log "set name called with #{name}"
+    player.name = name
+  # TODO: broadcast name to to other players?
 
-    socket.on 'update input', (input) ->
-      player.updateContribution(input)
+  socket.on 'update-input', (input) ->
+    player.updateContribution(input)
 
-	socket.emit 'connected', {'hello': 'world'}
+  socket.emit 'connected', {'hello': 'world'}
 )
 
 console.log "Listening on port #{port}"

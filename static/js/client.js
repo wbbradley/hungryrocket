@@ -34,10 +34,12 @@
     };
 
     Server.prototype.set_name = function(name) {
+      console.log("calling server set-name with " + name);
       gameboard.setState({
         username: name
       });
-      return this.socket.emit('set_name', name);
+      console.log("calling server set-name with " + name);
+      return this.socket.emit('set-name', name);
     };
 
     Server.prototype.update_game_state = function(game_state) {
