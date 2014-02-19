@@ -16,6 +16,10 @@ app.get('/', (req, res)=>
 io.sockets.on('connection', (socket)=>
 	socket.join room
 	socket.emit 'connected', {'hello': 'world'}
+
+	socket.on 'set_name', (name)=>
+		# set sockets player name as name
+		# then broadcast name to to other players
 )
 
 console.log "Listening on port #{port}"

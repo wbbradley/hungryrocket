@@ -33,7 +33,9 @@
       return server.set_name($('#username').val());
     };
 
-    Server.prototype.set_name = function() {};
+    Server.prototype.set_name = function(name) {
+      return this.socket.emit('set_name', name);
+    };
 
     Server.prototype.update_game_state = function(game_state) {
       return console.dir(game_state);

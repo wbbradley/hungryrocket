@@ -18,8 +18,9 @@ class Server
     console.log $('#username').val()
     server.set_name $('#username').val()
 
-  set_name: =>
+  set_name: (name)=>
     # TODO(mrjaeger): call the server
+    @socket.emit 'set_name', name
 
   update_game_state: (game_state) =>
     console.dir game_state
