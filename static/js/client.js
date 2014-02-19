@@ -8,26 +8,24 @@
       this.set_name = __bind(this.set_name, this);
       this.login = __bind(this.login, this);
       this.connected = __bind(this.connected, this);
+      this.setupSocket = __bind(this.setupSocket, this);
       this.connect = __bind(this.connect, this);
       this.props = props;
     }
 
     Server.prototype.connect = function(host) {
-      var fake_props;
       console.log("Connecting...");
-      fake_props = {
-        motd: 'Welcome'
-      };
-      return window.setTimeout(((function(_this) {
-        return function() {
-          return _this.connected(fake_props);
-        };
-      })(this)), 0);
+      this.socket = io.connect();
+      return this.setupSocket();
     };
 
-    Server.prototype.connected = function(server_props) {
+    Server.prototype.setupSocket = function() {
+      return this.socket.on('connected', this.connected);
+    };
+
+    Server.prototype.connected = function(data) {
       console.log("Server connected");
-      return console.dir(server_props);
+      return console.log(data);
     };
 
     Server.prototype.login = function() {

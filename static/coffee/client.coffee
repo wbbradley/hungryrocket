@@ -8,11 +8,11 @@ class Server
     @setupSocket()
 
   setupSocket: =>
-    @socket.on 'connected', @connected(data)
+    @socket.on 'connected', @connected
 
-  connected: (server_props) =>
+  connected: (data) =>
     console.log "Server connected"
-    console.dir server_props
+    console.log data
 
   login: =>
     console.log $('#username').val()

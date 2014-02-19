@@ -15,7 +15,7 @@ app.get('/', (req, res)=>
 
 io.sockets.on('connection', (socket)=>
 	socket.join room
-	socket.emit 'connected'
+	socket.emit 'connected', {'hello': 'world'}
 )
 
 console.log "Listening on port #{port}"
