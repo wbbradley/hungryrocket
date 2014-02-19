@@ -1,20 +1,18 @@
 _ = require 'lodash'
-io = require 'socket.io'
-
-pass = 'wtf?'
 
 
 class Game
 
-  constructor: ({@room, @rocket, @arena, @players}=opts or {})->
-    @id = 'fuckleberry'
+  constructor: (opts)->
+    {@sockets, @rocket, @arena, @players} = opts ? {}
+    @id = 'uuid'
     @arena ?= new Arena
       radius: 1000
     @rocket ?= new Rocket
       angle: 0.0
       position:
-        x: 0.0
-        y: 0.0
+        X: 0.0
+        Y: 0.0
     @players ?= []
 
     @maxPlayers = 4
@@ -22,6 +20,11 @@ class Game
     @frameInterval = 35 # ms
     @frameTimer = null
     @state = null
+    @pointsPerFrame = 100
+
+  publish: (type, data) =>
+    console.log "Publish: #{type}: #{JSON.stringify(data)}"
+    @sockets.in(@id).emit(type, data)
 
   startGame: =>
     # initialize timer
@@ -29,18 +32,21 @@ class Game
       throw 'Game has already started'
 
     @inProgress = true
-    @frameTimer = setInterval(@publishFrameState, @frameInterval)
+    @frameTimer = setInterval(@tick, @frameInterval)
 
-  calculateFrameState: =>
-    # TODO: Sum player contributions
-    # TODO: Apply to existing Rocket
+    @publish('startGame')
 
-    console.log 'Calculating frame state...'
+  fetchFrameState: =>
     state =
+      game:
+        id: @id
+        inProgress: @inProgress
+      arena:
+        radius: @arena.radius
       rocket:
         position:
-          x: @rocket.position.X
-          y: @rocket.position.Y
+          X: @rocket.position.X
+          Y: @rocket.position.Y
         angle: @rocket.angle
       players: []
 
@@ -48,14 +54,41 @@ class Game
       state.players.push
         name: player.name
         score: player.score
-        contribution: 0.0     # Current contribution delta
-        rawContribution: 0.0  # Contribution input pre-scaling
+        contribution: player.contribution * player.power
+        rawContribution: player.contribution
         angle: 0.0            # Current intended angle
+
     return state
+
+  updateFrameState: =>
+    # Move rocket along existing heading based on velocity
+    xDelta = Math.cos(@rocket.angle) * @rocket.velocity
+    yDelta = Math.sin(@rocket.angle) * @rocket.velocity
+    @rocket.position.X = @rocket.position.X + xDelta
+    @rocket.position.Y = @rocket.position.Y + yDelta
+
+    # Sum player contributions
+    maxAngle = Math.PI / 32
+    angleDelta = 0.0
+    for player in @players
+      angleDelta += player.contribution * player.power * maxAngle
+
+    # Update rocket angle based on summed player contributions
+    @rocket.angle = (@rocket.angle + angleDelta) % (2 * Math.PI)
+
+    # Find out which player's territory the rocket is over and award this
+    # round's points to them
+    scoringPlayerIdx = @arena.calculateSector(@rocket.position)
+    scoringPlayer = @players[scoringPlayerIdx]
+    scoringPlayer.score += @pointsPerFrame
         
   publishFrameState: =>
-    @state = @calculateFrameState()
-    io.sockets.in(@id).emit(@state)
+    @state = @fetchFrameState()
+    @publish('updateGameState', @state)
+
+  tick: =>
+    @updateFrameState()
+    @publishFrameState()
 
   registerPlayer: (player) =>
     if @players.length >= @maxPlayers
@@ -65,36 +98,77 @@ class Game
     player.score = 0.0
 
     # start game if we have enough players
-    # if @players.length == @maxPlayers
-    #   @startGame()
+    if @players.length == @maxPlayers
+      @startGame()
 
 
 class Player
-  constructor: ({@socket, @game, @name, @score}=opts) ->
-    @score ?= 0
+  constructor: (opts) ->
+    {@socket, @game, @name} = opts ? {}
+    @contribution = 0.0
+    @score = 0
+    @power = 1.0
 
   updateContribution: (c) =>
     @contribution = c
 
 
 class Rocket
-  constructor: ({@position, @angle}=opts) ->
+  constructor: (opts) ->
+    {@position, @angle, @velocity} = opts ? {}
+    @position ?= {X: 0, Y: 0}
+    @velocity ?= 1.0
+    @angle = Math.random() * (2 * Math.PI)
+
+  toString: =>
+    JSON.stringify
+      angle: @angle
+      position: @position
+      velocity: @velocity
 
 
 class Arena
-  constructor: ({@radius}=opts) ->
+  constructor: (opts) ->
+    {@radius} = opts ? {}
 
-  calculateSector: (x, y) ->
+  calculateSector: (position) ->
     # Return a player index for the play who owns the current sector
+    {X, Y} = position
+    switch
+      when X < 0 and Y >= 0 then 0
+      when X >= 0 and Y >= 0 then 1
+      when X < 0 and Y < 0 then 2
+      when X >= 0 and Y < 0 then 3
 
+
+# Some vector calculations, based on http://stackoverflow.com/a/573206
+# Reversed rocket position is roughly perpendicular to the tangent vector
+# at the circle boundary as the rocket approaches
+# n = {X: -rocket.position.X, Y: -rocket.position.Y}
+# v = rocket.angle
+# dot = (v1, v2) -> (v1.X * v2.X) + (v1.Y * v2.Y)
+# 
+# # find reflection given vector n
+# u = (dot(v, n) / dot(n, n)) * n
+# u = (v dot n / n dot n) n
+# w = v - u
+# vnew = w - u
 
 test = ->
-  game = new Game()
+  express = require 'express'
+  port = 3000
+  app = express()
+  server = app.listen(port)
+  io = require('socket.io').listen(server)
+
+  game = new Game
+    sockets: io.sockets
   for player in ['Dave', 'Will', 'Andrew', 'Shlomo']
     p = new Player
       name: player
       game: game
     game.registerPlayer(p)
+    p.updateContribution(1.0)
   return game
 
 
