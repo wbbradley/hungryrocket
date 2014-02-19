@@ -3,7 +3,7 @@ port = 3000
 app = express()
 server = app.listen port
 io = require('socket.io').listen server
-room = 'the one'
+games = require './game.coffee'
 
 app.set 'views', (__dirname + '/views')
 app.engine '.html', require('ejs').renderFile
@@ -13,8 +13,20 @@ app.get('/', (req, res)=>
 	res.render 'index.html'
 )
 
-io.sockets.on('connection', (socket)=>
-	socket.join room
+game = new games.Game()
+
+io.sockets.on('connection', (socket) =>
+    player = new games.Player()
+    socket.on 'join game', (data) ->
+      game = '' # TODO: get game based on data
+      socket.join game.id
+      player.game = game
+    socket.on 'set name', (data) ->
+      # TODO: set player name
+    player = new games.Player
+      socket: socket
+      game: game
+    game.registerPlayer(player)
 	socket.emit 'connected', {'hello': 'world'}
 
 	socket.on 'set_name', (name)=>

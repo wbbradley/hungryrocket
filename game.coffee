@@ -1,27 +1,27 @@
 _ = require 'lodash'
+io = require 'socket.io'
 
 pass = 'wtf?'
 
 
 class Game
 
-  constructor: ->
-    @arena = new Arena
+  constructor: ({@room, @rocket, @arena, @players}=opts or {})->
+    @id = 'fuckleberry'
+    @arena ?= new Arena
       radius: 1000
-    @rocket = new Rocket
-      position: @initialRocketPosition()
-      angle: @initialRocketAngle()
-    @players = []
+    @rocket ?= new Rocket
+      angle: 0.0
+      position:
+        x: 0.0
+        y: 0.0
+    @players ?= []
 
     @maxPlayers = 4
     @inProgress = false
     @frameInterval = 35 # ms
     @frameTimer = null
     @state = null
-    @playerContributions = {}
-
-  initialRocketPosition: -> [0.0, 0.0]
-  initialRocketAngle: -> 0.0
 
   startGame: =>
     # initialize timer
@@ -32,23 +32,37 @@ class Game
     @frameTimer = setInterval(@publishFrameState, @frameInterval)
 
   calculateFrameState: =>
-    # Sum player contributions
-    # Apply to existing Rocket
-    console.log 'Calculating frame state...'
+    # TODO: Sum player contributions
+    # TODO: Apply to existing Rocket
 
+    console.log 'Calculating frame state...'
+    state =
+      rocket:
+        position:
+          x: @rocket.position.X
+          y: @rocket.position.Y
+        angle: @rocket.angle
+      players: []
+
+    for player in @players
+      state.players.push
+        name: player.name
+        score: player.score
+        contribution: 0.0     # Current contribution delta
+        rawContribution: 0.0  # Contribution input pre-scaling
+        angle: 0.0            # Current intended angle
+    return state
+        
   publishFrameState: =>
     @state = @calculateFrameState()
-    # TODO: push to socket for each player
-
-  updatePlayerContribution: (player, contribution) =>
-    @playerContributions[player.name] = contribution
+    io.sockets.in(@id).emit(@state)
 
   registerPlayer: (player) =>
     if @players.length >= @maxPlayers
       throw 'Max number of players has already been reached'
 
     @players.push(player)
-    @updatePlayerContribution(player, 0.0)
+    player.score = 0.0
 
     # start game if we have enough players
     # if @players.length == @maxPlayers
@@ -56,10 +70,11 @@ class Game
 
 
 class Player
-  constructor: ({@connection, @game, @name}=opts) ->
+  constructor: ({@socket, @game, @name, @score}=opts) ->
+    @score ?= 0
 
   updateContribution: (c) =>
-    @game.updatePlayerContribution(@, c)
+    @contribution = c
 
 
 class Rocket
@@ -68,6 +83,9 @@ class Rocket
 
 class Arena
   constructor: ({@radius}=opts) ->
+
+  calculateSector: (x, y) ->
+    # Return a player index for the play who owns the current sector
 
 
 test = ->
