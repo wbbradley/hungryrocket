@@ -22,5 +22,11 @@
   "bugs": {
     "url": "https://github.com/wbbradley/hungryrocket/issues"
   },
-  "homepage": "https://github.com/wbbradley/hungryrocket"
+  "homepage": "https://github.com/wbbradley/hungryrocket",
+  "dependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-coffee": "~0.10.1",
+    "grunt-contrib-less": "~0.9.0",
+    "grunt-contrib-watch": "~0.5.3"
+  }
 }
