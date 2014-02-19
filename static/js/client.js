@@ -30,7 +30,7 @@
 
     Server.prototype.login = function() {
       console.log($('#username').val());
-      return server.set_name($('#username').val());
+      return this.set_name($('#username').val());
     };
 
     Server.prototype.set_name = function(name) {

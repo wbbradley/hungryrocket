@@ -14,9 +14,12 @@ Gameboard = React.createClass({
 		);
 	}
 });
+
 gameboard = Gameboard()
+
 React.renderComponent(
 	gameboard,
 	document.getElementById('gameboard')
 	);
+
 this.gameboard = gameboard

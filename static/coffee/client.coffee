@@ -16,7 +16,7 @@ class Server
 
   login: =>
     console.log $('#username').val()
-    server.set_name $('#username').val()
+    @set_name $('#username').val()
 
   set_name: (name)=>
     # optimistically set the local name
