@@ -18,19 +18,21 @@ game = new games.Game
 
 players = {}
 
-io.sockets.on('connection', (socket) =>
+io.sockets.on 'connection', (socket) =>
   console.log "Connection established"
 
   player = new games.Player()
   player.socket = socket
 
   socket.on 'set-name', (name) ->
+    # TODO: rework this, it sucks
     console.log "set name called with #{name}"
     if players[name]
       player = players[name]
       player.socket = socket
     else
       player.name = name
+      player[name] = player
 
     # For now, immediately join a game
     game.registerPlayer(player)
@@ -43,6 +45,5 @@ io.sockets.on('connection', (socket) =>
     player.updateContribution(input)
 
   socket.emit 'connected', {'hello': 'world'}
-)
 
 console.log "Listening on port #{port}"
