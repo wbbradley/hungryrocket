@@ -67,6 +67,9 @@ class Game
     @rocket.position.X = @rocket.position.X + xDelta
     @rocket.position.Y = @rocket.position.Y + yDelta
 
+    # Test if rocket is out of bounds
+    outOfBounds = @arena.rocketOutOfBounds(@rocket)
+
     # Sum player contributions
     maxAngle = Math.PI / 32
     angleDelta = 0.0
@@ -119,6 +122,7 @@ class Rocket
     @position ?= {X: 0, Y: 0}
     @velocity ?= 1.0
     @angle = Math.random() * (2 * Math.PI)
+    @radius ?= 2
 
   toString: =>
     JSON.stringify
@@ -139,6 +143,28 @@ class Arena
       when X >= 0 and Y >= 0 then 1
       when X < 0 and Y < 0 then 2
       when X >= 0 and Y < 0 then 3
+
+  # IMPORTANT: Assumes rocket is a circle
+  rocketOutOfBounds: (rocket)->
+    cos45 = sin45 = Math.cos(Math.PI/4)
+    points = [
+      [(rocket.X + rocket.radius), rocket.Y]
+      [(rocket.X - rocket.radius), rocket.Y]
+      [rocket.X, (rocket.Y + rocket.radius)]
+      [rocket.X, (rocket.Y - rocket.radius)]
+      [(rocket.X + rocket.radius*cos45), (rocket.Y + rocket.radius*sin45)]
+      [(rocket.X - rocket.radius*cos45), (rocket.Y + rocket.radius*sin45)]
+      [(rocket.X - rocket.radius*cos45), (rocket.Y - rocket.radius*sin45)]
+      [(rocket.X + rocket.radius*cos45), (rocket.Y - rocket.radius*sin45)]
+    ]
+
+    outOfBounds = false
+    for point in points:
+      if (Math.pow(point[0], 2) + Math.pow(point[1], 2)) >= Math.pow(@radius, 2)
+        outOfBounds = true
+        break
+    return outOfBounds     
+
 
 
 # Some vector calculations, based on http://stackoverflow.com/a/573206
