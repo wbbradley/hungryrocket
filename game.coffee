@@ -152,24 +152,7 @@ class Arena
 
   # IMPORTANT: Assumes rocket is a circle
   rocketOutOfBounds: (rocket)->
-    cos45 = sin45 = Math.cos(Math.PI/4)
-    points = [
-      [(rocket.X + rocket.radius), rocket.Y]
-      [(rocket.X - rocket.radius), rocket.Y]
-      [rocket.X, (rocket.Y + rocket.radius)]
-      [rocket.X, (rocket.Y - rocket.radius)]
-      [(rocket.X + rocket.radius*cos45), (rocket.Y + rocket.radius*sin45)]
-      [(rocket.X - rocket.radius*cos45), (rocket.Y + rocket.radius*sin45)]
-      [(rocket.X - rocket.radius*cos45), (rocket.Y - rocket.radius*sin45)]
-      [(rocket.X + rocket.radius*cos45), (rocket.Y - rocket.radius*sin45)]
-    ]
-
-    outOfBounds = false
-    for point in points:
-      if (Math.pow(point[0], 2) + Math.pow(point[1], 2)) >= Math.pow(@radius, 2)
-        outOfBounds = true
-        break
-    return outOfBounds     
+    return (Math.pow(rocket.X, 2) + Math.pow(rocket.Y, 2)) > Math.pow((@radius - rocket.radius), 2)
 
   bounce: (position, angle) =>
     # Some vector calculations, based on http://stackoverflow.com/a/573206
@@ -201,7 +184,6 @@ class Arena
 dist = (v) -> Math.sqrt(Math.pow(v.e(1), 2) + Math.pow(v.e(2), 2))
 angleToVec = (angle) -> Vector.create([Math.cos(angle), Math.sin(angle)])
 angleFromVec = (v) -> Math.atan2(v.e(2), v.e(1))
-
 
 test = ->
   express = require 'express'
