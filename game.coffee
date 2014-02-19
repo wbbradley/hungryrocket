@@ -1,4 +1,6 @@
 _ = require 'lodash'
+Sylvester = require 'sylvester'
+Vector = Sylvester.Vector
 
 
 class Game
@@ -79,11 +81,15 @@ class Game
     # Update rocket angle based on summed player contributions
     @rocket.angle = (@rocket.angle + angleDelta) % (2 * Math.PI)
 
+    # Calculate any bounces off the walls
+    @rocket.angle = @arena.bounce(@rocket.position, @rocket.angle)
+
     # Find out which player's territory the rocket is over and award this
     # round's points to them
     scoringPlayerIdx = @arena.calculateSector(@rocket.position)
     scoringPlayer = @players[scoringPlayerIdx]
-    scoringPlayer.score += @pointsPerFrame
+    if scoringPlayer
+      scoringPlayer.score += @pointsPerFrame
         
   publishFrameState: =>
     @state = @fetchFrameState()
@@ -165,20 +171,37 @@ class Arena
         break
     return outOfBounds     
 
+  bounce: (position, angle) =>
+    # Some vector calculations, based on http://stackoverflow.com/a/573206
+    # Reversed rocket position is roughly perpendicular to the tangent vector
+    # at the circle boundary as the rocket approaches
+    n = Vector.create([-position.X, -position.Y])
+    console.log "DIST: #{dist(n)}"
+    if dist(n) < @radius
+       return angle  # No bounce, we're still in-bounds
+    console.log "n: #{n.e(1)}, #{n.e(2)}"
+    v = angleToVec(angle)
+    console.log "v: #{v.e(1)}, #{v.e(2)}"
+  
+    # find reflection given vector n
+    u = n.multiply(v.dot(n) / n.dot(n))
+    console.log "u: #{u.e(1)}, #{u.e(2)}"
+    w = v.subtract(u)
+    console.log "w: #{w.e(1)}, #{w.e(2)}"
+    vNext = w.subtract(u)
+    console.log "v': #{vNext.e(1)}, #{vNext.e(2)}"
+    angleNext = angleFromVec(vNext)
+    console.log('BOUNCE!')
+    return angleNext
 
 
-# Some vector calculations, based on http://stackoverflow.com/a/573206
-# Reversed rocket position is roughly perpendicular to the tangent vector
-# at the circle boundary as the rocket approaches
-# n = {X: -rocket.position.X, Y: -rocket.position.Y}
-# v = rocket.angle
-# dot = (v1, v2) -> (v1.X * v2.X) + (v1.Y * v2.Y)
-# 
-# # find reflection given vector n
-# u = (dot(v, n) / dot(n, n)) * n
-# u = (v dot n / n dot n) n
-# w = v - u
-# vnew = w - u
+# dot = (v1, v2) -> (v1.X * v2.X) + (v1.Y * v2.Y) */
+# subtractVecs(v1, v2) -> {X: v1.X - v2.X, Y: v1.Y - v2.Y}
+# scaleVec(v1, scale) -> {X: v1.X * scale, Y: v1.Y * scale}
+dist = (v) -> Math.sqrt(Math.pow(v.e(1), 2) + Math.pow(v.e(2), 2))
+angleToVec = (angle) -> Vector.create([Math.cos(angle), Math.sin(angle)])
+angleFromVec = (v) -> Math.atan2(v.e(2), v.e(1))
+
 
 test = ->
   express = require 'express'
@@ -194,7 +217,7 @@ test = ->
       name: player
       game: game
     game.registerPlayer(p)
-    p.updateContribution(1.0)
+    # p.updateContribution(1.0)
   return game
 
 

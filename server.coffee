@@ -16,21 +16,28 @@ app.get('/', (req, res)=>
 game = new games.Game
   sockets: io.sockets
 
+players = {}
+
 io.sockets.on('connection', (socket) =>
   console.log "Connection established"
 
   player = new games.Player()
   player.socket = socket
-  socket.on 'join-game', (data) ->
-    game.registerPlayer(player)
-    socket.join(game.id)
-    socket.player = player
-    player.game = game
 
   socket.on 'set-name', (name) ->
     console.log "set name called with #{name}"
-    player.name = name
-  # TODO: broadcast name to to other players?
+    if players[name]
+      player = players[name]
+      player.socket = socket
+    else
+      player.name = name
+
+    # For now, immediately join a game
+    game.registerPlayer(player)
+    socket.join(game.id)
+    socket.player = player
+    player.socket = socket
+    player.game = game
 
   socket.on 'update-input', (input) ->
     player.updateContribution(input)
