@@ -14,6 +14,7 @@ class Server
 
   setupSocket: =>
     @socket.on 'connected', @connected
+    @socket.on 'update-game-state', @update_game_state
 
   connected: (data) =>
     console.log "Server connected"
@@ -32,7 +33,7 @@ class Server
 
   update_game_state: (game_state) =>
     console.dir game_state
-    gameboard.setState({gamestate: name})
+    gameboard.setState(game_state)
 
 server = new Server()
 server.connect()

@@ -1,5 +1,5 @@
 (function() {
-  var Gameboard, gameboard, test_update;
+  var Gameboard, gameboard;
 
   gameboard = null;
 
@@ -18,9 +18,6 @@
           }
         }
       };
-    },
-    view_coord_len: function(x) {
-      return x / (2.0 * this.state.arena.radius) * globals.viewport.width;
     },
     arenaViewBox: function() {
       var arena;
@@ -63,20 +60,7 @@
     globals: Rocket.globals
   });
 
-  test_update = function() {
-    var timestamp;
-    timestamp = (new Date()).getTime() / 1000.0;
-    return gameboard.setState({
-      rocket: {
-        position: {
-          X: Math.cos(timestamp) * 200,
-          Y: Math.sin(timestamp) * 200
-        }
-      }
-    });
-  };
-
-  window.setInterval(test_update, 50);
+  "test_update = ->\n  timestamp = (new Date()).getTime() / 1000.0\n  gameboard.setState\n    rocket:\n      position:\n        X: Math.cos(timestamp) * 200\n        Y: Math.sin(timestamp) * 200\n\nwindow.setInterval test_update, 50";
 
   React.renderComponent(gameboard, document.getElementById('gameboard'));
 

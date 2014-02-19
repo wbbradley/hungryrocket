@@ -126,7 +126,7 @@ class Rocket
   constructor: (opts) ->
     {@position, @angle, @velocity} = opts ? {}
     @position ?= {X: 0, Y: 0}
-    @velocity ?= 1.0
+    @velocity ?= 10.0
     @angle = Math.random() * (2 * Math.PI)
     @radius ?= 2
 

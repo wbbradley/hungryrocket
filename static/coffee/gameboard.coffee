@@ -10,9 +10,6 @@ Gameboard = React.createClass
         X: 0
         Y: 0
 
-  view_coord_len: (x) ->
-    return x / (2.0 * this.state.arena.radius) * globals.viewport.width
-
   arenaViewBox: ->
     arena = @state.arena
     return "#{-arena.radius} #{-arena.radius} #{arena.radius * 2} #{arena.radius * 2}"
@@ -31,6 +28,7 @@ Gameboard = React.createClass
 
 
 gameboard = Gameboard({globals: Rocket.globals})
+"""
 test_update = ->
   timestamp = (new Date()).getTime() / 1000.0
   gameboard.setState
@@ -40,7 +38,7 @@ test_update = ->
         Y: Math.sin(timestamp) * 200
 
 window.setInterval test_update, 50
-
+"""
 React.renderComponent(gameboard, document.getElementById('gameboard'))
 
 this.gameboard = gameboard

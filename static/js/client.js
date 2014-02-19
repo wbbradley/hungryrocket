@@ -27,7 +27,8 @@
     };
 
     Server.prototype.setupSocket = function() {
-      return this.socket.on('connected', this.connected);
+      this.socket.on('connected', this.connected);
+      return this.socket.on('update-game-state', this.update_game_state);
     };
 
     Server.prototype.connected = function(data) {
@@ -52,9 +53,7 @@
 
     Server.prototype.update_game_state = function(game_state) {
       console.dir(game_state);
-      return gameboard.setState({
-        gamestate: name
-      });
+      return gameboard.setState(game_state);
     };
 
     return Server;
