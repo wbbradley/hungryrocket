@@ -1,5 +1,7 @@
 (function() {
-  var Gameboard, gameboard;
+  var Gameboard, button, circle, div, form, g, gameboard, h1, img, input, li, line, rect, svg, text, ul, _ref;
+
+  _ref = React.DOM, h1 = _ref.h1, div = _ref.div, svg = _ref.svg, rect = _ref.rect, text = _ref.text, g = _ref.g, ul = _ref.ul, li = _ref.li, form = _ref.form, input = _ref.input, button = _ref.button, img = _ref.img, circle = _ref.circle, line = _ref.line;
 
   gameboard = null;
 
@@ -27,8 +29,20 @@
       return "" + (-arena.radius) + " " + (-arena.radius) + " " + (arena.radius * 2) + " " + (arena.radius * 2);
     },
     render: function() {
-      var button, circle, div, form, g, h1, img, input, li, line, rect, svg, ul, _ref;
-      _ref = React.DOM, h1 = _ref.h1, div = _ref.div, svg = _ref.svg, rect = _ref.rect, g = _ref.g, ul = _ref.ul, li = _ref.li, form = _ref.form, input = _ref.input, button = _ref.button, img = _ref.img, circle = _ref.circle, line = _ref.line;
+      var angle, idx, labels, player, _i, _len, _ref1;
+      labels = [];
+      if (this.state.players != null) {
+        _ref1 = this.state.players;
+        for (idx = _i = 0, _len = _ref1.length; _i < _len; idx = ++_i) {
+          player = _ref1[idx];
+          angle = (idx + 0.5) * 2 * Math.PI / this.state.players.length;
+          labels.push(text({
+            x: this.state.arena.radius * .75 * Math.cos(angle),
+            y: this.state.arena.radius * .75 * Math.sin(angle),
+            className: 'score'
+          }, "" + player.name));
+        }
+      }
       return div({}, [
         h1({}, ['ello' + this.state.username]), div({
           style: {
@@ -48,21 +62,21 @@
               cx: 0,
               cy: 0,
               fill: "#f0fdf6"
-            }), circle({
-              r: this.state.rocket.radius,
-              cx: this.state.rocket.position.X,
-              cy: this.state.rocket.position.Y,
-              fill: "#008d46"
             }), line({
               x1: this.state.rocket.position.X,
               y1: this.state.rocket.position.Y,
               x2: this.state.rocket.position.X + (Math.cos(this.state.rocket.angle + Math.PI) * this.state.rocket.radius * 1.5),
               y2: this.state.rocket.position.Y + (Math.sin(this.state.rocket.angle + Math.PI) * this.state.rocket.radius * 1.5),
-              stroke: "red",
+              stroke: "orange",
               strokeWidth: 50,
               fill: "#008d46"
+            }), circle({
+              r: this.state.rocket.radius,
+              cx: this.state.rocket.position.X,
+              cy: this.state.rocket.position.Y,
+              fill: "#008d46"
             })
-          ])
+          ].concat(labels))
         ])
       ]);
     }
