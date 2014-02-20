@@ -79,11 +79,11 @@
 
   $((function(_this) {
     return function() {
-      var center_line;
+      var center_line, left_degrees, left_interval, right_degrees, right_interval;
       center_line = $("<div id='center_line'></div>");
-      center_line.css('left', "" + ($('#slider').width() / 2) + "px");
+      center_line.css('left', "50%");
       $('#slider').append(center_line);
-      return $('#slider').click(function(event) {
+      $('#slider').click(function(event) {
         var indicator, indicator_width, left, middle, new_angle, offsetX;
         offsetX = event.offsetX;
         middle = $(_this).width() / 2;
@@ -98,6 +98,50 @@
           $('#slider').append(indicator);
         }
         return server.socket.emit('update-input', new_angle);
+      });
+      left_interval = null;
+      left_degrees = 0;
+      $('#go-left').on('mousedown', function() {
+        if (!left_interval) {
+          left_degrees += 0.1;
+          left_interval = setInterval(function() {
+            if (left_degrees < 1) {
+              left_degrees += -0.1;
+            }
+            return server.socket.emit('update-input', left_degrees);
+          }, 100);
+          return server.socket.emit('update-input', left_degrees);
+        }
+      });
+      $('#go-left').on('mouseup', function() {
+        if (left_interval) {
+          clearInterval(left_interval);
+          left_interval = null;
+          left_degrees = 0;
+          return server.socket.emit('update-input', left_degrees);
+        }
+      });
+      right_interval = null;
+      right_degrees = 0;
+      $('#go-right').on('mousedown', function() {
+        if (!right_interval) {
+          right_degrees -= 0.1;
+          right_interval = setInterval(function() {
+            if (right_degrees > -1) {
+              right_degrees -= -0.1;
+            }
+            return server.socket.emit('update-input', right_degrees);
+          }, 100);
+          return server.socket.emit('update-input', right_degrees);
+        }
+      });
+      return $('#go-right').on('mouseup', function() {
+        if (right_interval) {
+          clearInterval(right_interval);
+          right_interval = null;
+          right_degrees = 0;
+          return server.socket.emit('update-input', right_degrees);
+        }
       });
     };
   })(this));

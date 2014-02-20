@@ -43,8 +43,9 @@ server.connect()
 @Rocket.globals = globals
 
 $ =>
+  # one way
   center_line = $("<div id='center_line'></div>")
-  center_line.css 'left', "#{($('#slider').width() / 2)}px"
+  center_line.css 'left', "50%"
   $('#slider').append center_line
 
   $('#slider').click((event)=>
@@ -64,3 +65,44 @@ $ =>
 
     server.socket.emit 'update-input', new_angle
   )
+
+  # another way
+  left_interval = null
+  left_degrees = 0
+
+  $('#go-left').on 'mousedown', ()=>
+    if not left_interval
+      left_degrees += 0.1 
+      left_interval = setInterval(()=>
+        if left_degrees < 1
+          left_degrees += -0.1
+        server.socket.emit 'update-input', left_degrees
+      , 100)
+      server.socket.emit 'update-input', left_degrees
+
+  $('#go-left').on 'mouseup', ()=>
+    if left_interval
+      clearInterval left_interval
+      left_interval = null
+      left_degrees = 0
+      server.socket.emit 'update-input', left_degrees
+
+  right_interval = null
+  right_degrees = 0
+
+  $('#go-right').on 'mousedown', ()=>
+    if not right_interval
+      right_degrees -= 0.1 
+      right_interval = setInterval(()=>
+        if right_degrees > -1
+          right_degrees -= -0.1
+        server.socket.emit 'update-input', right_degrees
+      , 100)
+      server.socket.emit 'update-input', right_degrees
+
+  $('#go-right').on 'mouseup', ()=>
+    if right_interval
+      clearInterval right_interval
+      right_interval = null
+      right_degrees = 0
+      server.socket.emit 'update-input', right_degrees
