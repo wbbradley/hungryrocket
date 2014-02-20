@@ -20,19 +20,18 @@ class Server
     console.log "Server connected"
     console.log data
 
+  reset: =>
+    @socket.emit 'reset-game', {id: gameboard.state?.game?.id?}
+
   login: =>
     username = $('#username').val()
     @set_name username
 
   set_name: (name) =>
-    # optimistically set the local name
-    console.log "calling server set-name with #{name}"
     gameboard.setState({username: name})
-    console.log "calling server set-name with #{name}"
     @socket.emit 'set-name', name
 
   update_game_state: (game_state) =>
-    # console.dir game_state
     gameboard.setState(game_state)
 
 server = new Server()
@@ -40,6 +39,7 @@ server.connect()
 
 @Rocket = {}
 @Rocket.login = server.login
+@Rocket.reset = server.reset
 @Rocket.globals = globals
 
 $ =>
