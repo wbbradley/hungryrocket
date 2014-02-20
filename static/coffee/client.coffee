@@ -32,7 +32,7 @@ class Server
     @socket.emit 'set-name', name
 
   update_game_state: (game_state) =>
-    console.dir game_state
+    # console.dir game_state
     gameboard.setState(game_state)
 
 server = new Server()

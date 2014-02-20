@@ -52,7 +52,6 @@
     };
 
     Server.prototype.update_game_state = function(game_state) {
-      console.dir(game_state);
       return gameboard.setState(game_state);
     };
 
