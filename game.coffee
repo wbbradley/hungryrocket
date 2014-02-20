@@ -28,6 +28,16 @@ class Game
     console.log "Broadcast: #{type}: #{JSON.stringify(data)}"
     @sockets.in(@id).emit(type, data)
 
+  reset: =>
+    @broadcast('game-reset')
+    for client in @sockets.clients(@id)
+      client.leave(@id)
+    @players = []
+    @inProgress = false
+    @state = null 
+    clearInterval(@frameTimer)
+    @frameTimer = null
+
   startGame: =>
     # initialize timer
     if @inProgress or @frameTimer

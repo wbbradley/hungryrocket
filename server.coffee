@@ -13,10 +13,12 @@ app.get('/', (req, res)=>
 	res.render 'index.html'
 )
 
+players = {}
+gamesMap = {}
 game = new games.Game
   sockets: io.sockets
-
-players = {}
+  name: 'Test Game'
+gamesMap[game.id] = game
 
 io.sockets.on 'connection', (socket) =>
   console.log "Connection established"
@@ -47,6 +49,11 @@ io.sockets.on 'connection', (socket) =>
   socket.on 'update-input', (input) ->
     player.updateContribution(input)
 
+
+  socket.on 'reset-game', (opts) ->
+    {id} = opts
+    game = gamesMap[id]
+    game.reset()
   socket.emit 'connected', {'hello': 'world'}
 
 console.log "Listening on port #{port}"
