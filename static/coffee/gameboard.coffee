@@ -29,7 +29,7 @@ Gameboard = React.createClass
             x: @state.arena.radius * .75 * Math.cos(angle)
             y: @state.arena.radius * .75 * Math.sin(angle)
             className: 'score'
-          }, "#{player.name}")
+          }, "#{player.name}: #{player?.score}")
         )
 
     return (div {}, [

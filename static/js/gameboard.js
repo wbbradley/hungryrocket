@@ -40,7 +40,7 @@
             x: this.state.arena.radius * .75 * Math.cos(angle),
             y: this.state.arena.radius * .75 * Math.sin(angle),
             className: 'score'
-          }, "" + player.name));
+          }, "" + player.name + ": " + (player != null ? player.score : void 0)));
         }
       }
       return div({}, [
