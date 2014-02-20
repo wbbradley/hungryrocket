@@ -21,7 +21,9 @@ class Server
     console.log data
 
   reset: =>
-    @socket.emit 'reset-game', {id: gameboard.state?.game?.id?}
+    game = gameboard.state?.game
+    if game
+      @socket.emit 'reset-game', {id: game.id}
 
   login: =>
     username = $('#username').val()

@@ -38,10 +38,13 @@
     };
 
     Server.prototype.reset = function() {
-      var _ref, _ref1;
-      return this.socket.emit('reset-game', {
-        id: ((_ref = gameboard.state) != null ? (_ref1 = _ref.game) != null ? _ref1.id : void 0 : void 0) != null
-      });
+      var game, _ref;
+      game = (_ref = gameboard.state) != null ? _ref.game : void 0;
+      if (game) {
+        return this.socket.emit('reset-game', {
+          id: game.id
+        });
+      }
     };
 
     Server.prototype.login = function() {

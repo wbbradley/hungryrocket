@@ -117,6 +117,8 @@ class Game
     # start game if we have enough players
     if @players.length == @maxPlayers
       @startGame()
+    else:
+      @publishFrameState()
 
 
 class Player
@@ -179,9 +181,6 @@ class Arena
     return angleNext
 
 
-# dot = (v1, v2) -> (v1.X * v2.X) + (v1.Y * v2.Y) */
-# subtractVecs(v1, v2) -> {X: v1.X - v2.X, Y: v1.Y - v2.Y}
-# scaleVec(v1, scale) -> {X: v1.X * scale, Y: v1.Y * scale}
 dist = (v) -> Math.sqrt(Math.pow(v.e(1), 2) + Math.pow(v.e(2), 2))
 angleToVec = (angle) -> Vector.create([Math.cos(angle), Math.sin(angle)])
 angleFromVec = (v) -> Math.atan2(v.e(2), v.e(1))

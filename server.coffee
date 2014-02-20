@@ -45,6 +45,7 @@ io.sockets.on 'connection', (socket) =>
     socket.player = player
     player.socket = socket
     player.game = game
+    game.publishFrameState()
 
   socket.on 'update-input', (input) ->
     player.updateContribution(input)
@@ -54,6 +55,11 @@ io.sockets.on 'connection', (socket) =>
     {id} = opts
     game = gamesMap[id]
     game.reset()
+  socket.on 'reset-game', (opts) ->
+    {id} = opts
+    console.log "Resetting game: #{id}"
+    gamesMap[id]?.reset()
+
   socket.emit 'connected', {'hello': 'world'}
 
 console.log "Listening on port #{port}"
