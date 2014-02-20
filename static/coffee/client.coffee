@@ -41,3 +41,26 @@ server.connect()
 @Rocket = {}
 @Rocket.login = server.login
 @Rocket.globals = globals
+
+$ =>
+  center_line = $("<div id='center_line'></div>")
+  center_line.css 'left', "#{($('#slider').width() / 2)}px"
+  $('#slider').append center_line
+
+  $('#slider').click((event)=>
+    offsetX = event.offsetX
+    middle = $(this).width() / 2
+    new_angle = ((offsetX - middle) / middle)
+
+    indicator_width = 20
+    left = offsetX - (indicator_width / 2)
+    indicator = $ "<div id='indicator'></div>"
+    indicator.css 'left', "#{left}px"
+
+    if $('#indicator').length
+      $('#indicator').css 'left', "#{left}px"
+    else
+      $('#slider').append indicator
+
+    server.socket.emit 'update-input', new_angle
+  )

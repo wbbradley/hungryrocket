@@ -69,4 +69,29 @@
 
   this.Rocket.globals = globals;
 
+  $((function(_this) {
+    return function() {
+      var center_line;
+      center_line = $("<div id='center_line'></div>");
+      center_line.css('left', "" + ($('#slider').width() / 2) + "px");
+      $('#slider').append(center_line);
+      return $('#slider').click(function(event) {
+        var indicator, indicator_width, left, middle, new_angle, offsetX;
+        offsetX = event.offsetX;
+        middle = $(_this).width() / 2;
+        new_angle = (offsetX - middle) / middle;
+        indicator_width = 20;
+        left = offsetX - (indicator_width / 2);
+        indicator = $("<div id='indicator'></div>");
+        indicator.css('left', "" + left + "px");
+        if ($('#indicator').length) {
+          $('#indicator').css('left', "" + left + "px");
+        } else {
+          $('#slider').append(indicator);
+        }
+        return server.socket.emit('update-input', new_angle);
+      });
+    };
+  })(this));
+
 }).call(this);
