@@ -155,8 +155,8 @@ class Arena
     # Return a player index for the play who owns the current sector
     {X, Y} = position
     switch
-      when X < 0 and Y >= 0 then 0
-      when X >= 0 and Y >= 0 then 1
+      when X >= 0 and Y >= 0 then 0
+      when X < 0 and Y >= 0 then 1
       when X < 0 and Y < 0 then 2
       when X >= 0 and Y < 0 then 3
 
