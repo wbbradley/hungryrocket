@@ -1,7 +1,7 @@
 express = require 'express'
 port = 3000
 app = express()
-server = app.listen port
+server = app.listen(port, '0.0.0.0')
 io = require('socket.io').listen server
 games = require './game.coffee'
 
