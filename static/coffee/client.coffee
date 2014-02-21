@@ -50,61 +50,36 @@ $ =>
   center_line.css 'left', "50%"
   $('#slider').append center_line
 
-  $('#slider').click((event)=>
-    offsetX = event.offsetX
-    middle = $(this).width() / 2
-    new_angle = ((offsetX - middle) / middle)
+  slider_interval = null
+  angle = 0
+  slide = false
 
-    indicator_width = 20
-    left = offsetX - (indicator_width / 2)
-    indicator = $ "<div id='indicator'></div>"
-    indicator.css 'left', "#{left}px"
+  calcAngle = (offsetX, width)->
+    middle = width / 2
+    ((offsetX - middle) / middle)
 
-    if $('#indicator').length
-      $('#indicator').css 'left', "#{left}px"
-    else
+  setInterval(()=>
+    server.socket.emit 'update-input', angle
+  , 35)
+
+  $('#slider').on 'mousemove', (event)=>
+    if slide and event.target.id == 'slider'
+      indicator = $('#indicator')
+      angle = calcAngle(event.offsetX, $(this).width())
+
+      left = event.offsetX - (indicator.width() / 2)
+      indicator.css 'left', "#{left}px"
+
+  $('#slider').on 'mousedown', (event)=>
+    if not slide
+      $('#indicator').remove()
+      slide = true
+      angle = calcAngle(event.offsetX, $(this).width())
+
+      indicator = $ "<div id='indicator'></div>"
       $('#slider').append indicator
+      left = event.offsetX - (indicator.width() / 2)
+      indicator.css 'left', "#{left}px"
 
-    server.socket.emit 'update-input', new_angle
-  )
-
-  # another way
-  left_interval = null
-  left_degrees = 0
-
-  $('#go-left').on 'mousedown', ()=>
-    if not left_interval
-      left_degrees += 0.1 
-      left_interval = setInterval(()=>
-        if left_degrees < 1
-          left_degrees += -0.1
-        server.socket.emit 'update-input', left_degrees
-      , 100)
-      server.socket.emit 'update-input', left_degrees
-
-  $('#go-left').on 'mouseup', ()=>
-    if left_interval
-      clearInterval left_interval
-      left_interval = null
-      left_degrees = 0
-      server.socket.emit 'update-input', left_degrees
-
-  right_interval = null
-  right_degrees = 0
-
-  $('#go-right').on 'mousedown', ()=>
-    if not right_interval
-      right_degrees -= 0.1 
-      right_interval = setInterval(()=>
-        if right_degrees > -1
-          right_degrees -= -0.1
-        server.socket.emit 'update-input', right_degrees
-      , 100)
-      server.socket.emit 'update-input', right_degrees
-
-  $('#go-right').on 'mouseup', ()=>
-    if right_interval
-      clearInterval right_interval
-      right_interval = null
-      right_degrees = 0
-      server.socket.emit 'update-input', right_degrees
+  $('#slider').on 'mouseup', (event)=>
+    slide = false
