@@ -6,10 +6,10 @@
   gameboard = null;
 
   Gameboard = React.createClass({
-    getInitialState: function() {
+    getDefaultProps: function() {
       return {
         username: null,
-        gamestate: null,
+        players: [],
         arena: {
           radius: 1000
         },
@@ -25,31 +25,33 @@
     },
     arenaViewBox: function() {
       var arena;
-      arena = this.state.arena;
+      arena = this.props.arena;
       return "" + (-arena.radius) + " " + (-arena.radius) + " " + (arena.radius * 2) + " " + (arena.radius * 2);
     },
     render: function() {
-      var angle, idx, labels, player, _i, _len, _ref1;
+      var angle, idx, labels, player, timestamp, _i, _len, _ref1;
       labels = [];
-      if (this.state.players != null) {
-        _ref1 = this.state.players;
+      if (this.props.players != null) {
+        _ref1 = this.props.players;
         for (idx = _i = 0, _len = _ref1.length; _i < _len; idx = ++_i) {
           player = _ref1[idx];
-          angle = (idx + 0.5) * 2 * Math.PI / this.state.players.length;
+          angle = (idx + 0.5) * 2 * Math.PI / this.props.players.length;
+          timestamp = (new Date()).getTime() / 1000.0;
           labels.push(text({
-            x: this.state.arena.radius * .75 * Math.cos(angle),
-            y: this.state.arena.radius * .75 * Math.sin(angle),
+            key: idx,
+            x: this.props.arena.radius * .75 * Math.cos(angle),
+            y: this.props.arena.radius * .75 * Math.sin(angle),
             className: 'score'
-          }, "" + player.name + ": " + (player != null ? player.score : void 0)));
+          }, player.name));
         }
       }
       return div({}, [
-        h1({}, ['ello' + this.state.username]), div({
+        (typeof props !== "undefined" && props !== null ? props.username : void 0) != null ? h1({}, ["'ello guvna " + this.props.username]) : null, div({
           style: {
-            position: 'relative'
-          },
-          width: Rocket.globals.viewport.width,
-          height: Rocket.globals.viewport.height
+            position: 'relative',
+            'max-width': Rocket.globals.viewport.width,
+            'max-height': Rocket.globals.viewport.height
+          }
         }, [
           svg({
             xmlns: "http://www.w3.org/2000/svg",
@@ -58,22 +60,22 @@
             viewBox: this.arenaViewBox()
           }, [
             circle({
-              r: this.state.arena.radius,
+              r: this.props.arena.radius,
               cx: 0,
               cy: 0,
               fill: "#f0fdf6"
             }), line({
-              x1: this.state.rocket.position.X,
-              y1: this.state.rocket.position.Y,
-              x2: this.state.rocket.position.X + (Math.cos(this.state.rocket.angle + Math.PI) * this.state.rocket.radius * 1.5),
-              y2: this.state.rocket.position.Y + (Math.sin(this.state.rocket.angle + Math.PI) * this.state.rocket.radius * 1.5),
+              x1: this.props.rocket.position.X,
+              y1: this.props.rocket.position.Y,
+              x2: this.props.rocket.position.X + (Math.cos(this.props.rocket.angle + Math.PI) * this.props.rocket.radius * 1.5),
+              y2: this.props.rocket.position.Y + (Math.sin(this.props.rocket.angle + Math.PI) * this.props.rocket.radius * 1.5),
               stroke: "orange",
               strokeWidth: 50,
               fill: "#008d46"
             }), circle({
-              r: this.state.rocket.radius,
-              cx: this.state.rocket.position.X,
-              cy: this.state.rocket.position.Y,
+              r: this.props.rocket.radius,
+              cx: this.props.rocket.position.X,
+              cy: this.props.rocket.position.Y,
               fill: "#008d46"
             })
           ].concat(labels))
@@ -86,7 +88,7 @@
     globals: Rocket.globals
   });
 
-  "test_update = ->\n  timestamp = (new Date()).getTime() / 1000.0\n  gameboard.setState\n    rocket:\n      position:\n        X: Math.cos(timestamp) * 200\n        Y: Math.sin(timestamp) * 200\n\nwindow.setInterval test_update, 50";
+  "test_update = ->\n  timestamp = (new Date()).getTime() / 1000.0\n  gameboard.setprops\n    rocket:\n      position:\n        X: Math.cos(timestamp) * 200\n        Y: Math.sin(timestamp) * 200\n\nwindow.setInterval test_update, 50";
 
   React.renderComponent(gameboard, document.getElementById('gameboard'));
 

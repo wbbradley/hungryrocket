@@ -1,7 +1,7 @@
 globals =
 	viewport:
-		width: 400
-		height: 400
+		width: '320px'
+		height: '320px'
 
 class Server
   constructor: (props) ->
@@ -21,7 +21,7 @@ class Server
     console.log data
 
   reset: =>
-    game = gameboard.state?.game
+    game = gameboard.props?.game
     if game
       @socket.emit 'reset-game', {id: game.id}
 
@@ -30,11 +30,11 @@ class Server
     @set_name username
 
   set_name: (name) =>
-    gameboard.setState({username: name})
+    gameboard.setProps({username: name})
     @socket.emit 'set-name', name
 
   update_game_state: (game_state) =>
-    gameboard.setState(game_state)
+    gameboard.setProps game_state
 
 server = new Server()
 server.connect()

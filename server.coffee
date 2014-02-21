@@ -50,16 +50,11 @@ io.sockets.on 'connection', (socket) =>
   socket.on 'update-input', (input) ->
     player.updateContribution(input)
 
-
-  socket.on 'reset-game', (opts) ->
-    {id} = opts
-    game = gamesMap[id]
-    game.reset()
   socket.on 'reset-game', (opts) ->
     {id} = opts
     console.log "Resetting game: #{id}"
     gamesMap[id]?.reset()
 
-  socket.emit 'connected', {'hello': 'world'}
+  socket.emit 'connected', {'welcome': 'Hungry Rocket 0.1.0'}
 
 console.log "Listening on port #{port}"

@@ -4,8 +4,8 @@
 
   globals = {
     viewport: {
-      width: 400,
-      height: 400
+      width: '320px',
+      height: '320px'
     }
   };
 
@@ -39,7 +39,7 @@
 
     Server.prototype.reset = function() {
       var game, _ref;
-      game = (_ref = gameboard.state) != null ? _ref.game : void 0;
+      game = (_ref = gameboard.props) != null ? _ref.game : void 0;
       if (game) {
         return this.socket.emit('reset-game', {
           id: game.id
@@ -54,14 +54,14 @@
     };
 
     Server.prototype.set_name = function(name) {
-      gameboard.setState({
+      gameboard.setProps({
         username: name
       });
       return this.socket.emit('set-name', name);
     };
 
     Server.prototype.update_game_state = function(game_state) {
-      return gameboard.setState(game_state);
+      return gameboard.setProps(game_state);
     };
 
     return Server;

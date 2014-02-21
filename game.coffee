@@ -69,7 +69,7 @@ class Game
         score: player.score
         contribution: player.contribution * player.power
         rawContribution: player.contribution
-        angle: 0.0            # Current intended angle
+        angle: 0.0 # Current intended angle
 
     return state
 

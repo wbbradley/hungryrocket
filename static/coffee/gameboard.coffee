@@ -2,9 +2,9 @@
 
 gameboard = null
 Gameboard = React.createClass
-  getInitialState: ->
+  getDefaultProps: ->
     username: null
-    gamestate: null
+    players: []
     arena:
       radius: 1000
     rocket:
@@ -16,40 +16,48 @@ Gameboard = React.createClass
         Y: 0
 
   arenaViewBox: ->
-    arena = @state.arena
+    arena = @props.arena
     return "#{-arena.radius} #{-arena.radius} #{arena.radius * 2} #{arena.radius * 2}"
 
   render: ->
     labels = []
-    if @state.players?
-      for player, idx in @state.players
-        angle = (idx + 0.5) * 2 * Math.PI / @state.players.length
+    if @props.players?
+      for player, idx in @props.players
+        angle = (idx + 0.5) * 2 * Math.PI / @props.players.length
+        timestamp = (new Date()).getTime() / 1000.0
         labels.push(
           (text {
-            x: @state.arena.radius * .75 * Math.cos(angle)
-            y: @state.arena.radius * .75 * Math.sin(angle)
+            key: idx
+            x: @props.arena.radius * .75 * Math.cos(angle)
+            y: @props.arena.radius * .75 * Math.sin(angle)
             className: 'score'
-          }, "#{player.name}: #{player?.score}")
+          }, player.name)
         )
-
     return (div {}, [
-      (h1 {}, ['ello' + @state.username])
+      if props?.username? then (h1 {}, ["'ello guvna #{@props.username}"]) else null
       (div {
-        style: {position:'relative'},
-        width: Rocket.globals.viewport.width,
-        height: Rocket.globals.viewport.height}, [
+        style:
+          position:'relative'
+          'max-width': Rocket.globals.viewport.width
+          'max-height': Rocket.globals.viewport.height
+        }, [
         (svg {xmlns:"http://www.w3.org/2000/svg", width:'100%', height:'100%', viewBox:@arenaViewBox()}, [
-          (circle {r:@state.arena.radius, cx:0, cy:0, fill:"#f0fdf6"})
+          (circle {r:@props.arena.radius, cx:0, cy:0, fill:"#f0fdf6"})
           (line {
-            x1:@state.rocket.position.X,
-            y1:@state.rocket.position.Y,
-            x2:@state.rocket.position.X + (Math.cos(@state.rocket.angle + Math.PI) * @state.rocket.radius * 1.5),
-            y2:@state.rocket.position.Y + (Math.sin(@state.rocket.angle + Math.PI) * @state.rocket.radius * 1.5),
+            x1: @props.rocket.position.X,
+            y1: @props.rocket.position.Y,
+            x2: @props.rocket.position.X + (Math.cos(@props.rocket.angle + Math.PI) * @props.rocket.radius * 1.5),
+            y2: @props.rocket.position.Y + (Math.sin(@props.rocket.angle + Math.PI) * @props.rocket.radius * 1.5),
             stroke: "orange"
-            strokeWidth:50
+            strokeWidth: 50
             fill:"#008d46"
           })
-          (circle {r:@state.rocket.radius, cx:@state.rocket.position.X, cy:@state.rocket.position.Y, fill:"#008d46"})
+          (circle {
+            r: @props.rocket.radius
+            cx: @props.rocket.position.X
+            cy: @props.rocket.position.Y
+            fill: "#008d46"
+          })
         ].concat(labels)
         )
       ])
@@ -60,7 +68,7 @@ gameboard = Gameboard({globals: Rocket.globals})
 """
 test_update = ->
   timestamp = (new Date()).getTime() / 1000.0
-  gameboard.setState
+  gameboard.setprops
     rocket:
       position:
         X: Math.cos(timestamp) * 200
