@@ -82,43 +82,56 @@
 
   $((function(_this) {
     return function() {
-      var angle, calcAngle, center_line, slide, slider_interval;
+      var angle, calcNumPx, center_line, indicator, setAngle, slide, slider, slider_interval;
+      slider = $('#slider');
       center_line = $("<div id='center_line'></div>");
       center_line.css('left', "50%");
-      $('#slider').append(center_line);
+      slider.append(center_line);
+      indicator = $("<div id='indicator'></div>");
+      slider.append(indicator);
+      indicator.css('left', "" + ((slider.width() - indicator.width()) / 2) + "px");
       slider_interval = null;
       angle = 0;
       slide = false;
-      calcAngle = function(offsetX, width) {
+      calcNumPx = function(leftPx) {
+        return Number(leftPx.slice(0, leftPx.length - 2));
+      };
+      setAngle = function(offsetX) {
         var middle;
-        middle = width / 2;
-        return (offsetX - middle) / middle;
+        middle = slider.width() / 2;
+        return angle = (offsetX - middle) / middle;
       };
       setInterval(function() {
         return server.socket.emit('update-input', angle);
       }, 35);
-      $('#slider').on('mousemove', function(event) {
-        var indicator, left;
+      $(document).on('keydown', function(event) {
+        var left;
+        left = calcNumPx(indicator.css('left'));
+        if (event.keyCode === 37) {
+          indicator.css('left', "" + (left - 30) + "px");
+        } else if (event.keyCode === 39) {
+          indicator.css('left', "" + (left + 30) + "px");
+        }
+        return setAngle(calcNumPx(indicator.css('left')));
+      });
+      slider.on('mousemove', function(event) {
+        var left;
         if (slide && event.target.id === 'slider') {
-          indicator = $('#indicator');
-          angle = calcAngle(event.offsetX, $(_this).width());
+          setAngle(event.offsetX);
           left = event.offsetX - (indicator.width() / 2);
           return indicator.css('left', "" + left + "px");
         }
       });
-      $('#slider').on('mousedown', function(event) {
-        var indicator, left;
+      slider.on('mousedown', function(event) {
+        var left;
         if (!slide) {
-          $('#indicator').remove();
           slide = true;
-          angle = calcAngle(event.offsetX, $(_this).width());
-          indicator = $("<div id='indicator'></div>");
-          $('#slider').append(indicator);
+          setAngle(event.offsetX);
           left = event.offsetX - (indicator.width() / 2);
           return indicator.css('left', "" + left + "px");
         }
       });
-      return $('#slider').on('mouseup', function(event) {
+      return slider.on('mouseup', function() {
         return slide = false;
       });
     };

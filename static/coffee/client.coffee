@@ -45,41 +45,52 @@ server.connect()
 @Rocket.globals = globals
 
 $ =>
-  # one way
+  slider = $('#slider')
+
   center_line = $("<div id='center_line'></div>")
   center_line.css 'left', "50%"
-  $('#slider').append center_line
+  slider.append center_line
+
+  indicator = $ "<div id='indicator'></div>"
+  slider.append indicator
+  indicator.css 'left', "#{(slider.width() - indicator.width())/2}px"
 
   slider_interval = null
   angle = 0
   slide = false
 
-  calcAngle = (offsetX, width)->
-    middle = width / 2
-    ((offsetX - middle) / middle)
+  calcNumPx = (leftPx)=>
+    Number(leftPx.slice(0, (leftPx.length - 2)))
 
-  setInterval(()=>
+  setAngle = (offsetX)->
+    middle = slider.width() / 2
+    angle = ((offsetX - middle) / middle)
+
+  setInterval(=>
     server.socket.emit 'update-input', angle
+    #console.log angle
   , 35)
 
-  $('#slider').on 'mousemove', (event)=>
+  $(document).on 'keydown', (event)=>
+    left = calcNumPx indicator.css('left')
+    if event.keyCode == 37
+      indicator.css 'left', "#{(left - 30)}px"
+    else if event.keyCode == 39
+      indicator.css 'left', "#{(left + 30)}px"
+    setAngle calcNumPx indicator.css('left')
+
+  slider.on 'mousemove', (event)=>
     if slide and event.target.id == 'slider'
-      indicator = $('#indicator')
-      angle = calcAngle(event.offsetX, $(this).width())
-
+      setAngle event.offsetX
       left = event.offsetX - (indicator.width() / 2)
       indicator.css 'left', "#{left}px"
 
-  $('#slider').on 'mousedown', (event)=>
+  slider.on 'mousedown', (event)=>
     if not slide
-      $('#indicator').remove()
       slide = true
-      angle = calcAngle(event.offsetX, $(this).width())
-
-      indicator = $ "<div id='indicator'></div>"
-      $('#slider').append indicator
+      setAngle event.offsetX
       left = event.offsetX - (indicator.width() / 2)
       indicator.css 'left', "#{left}px"
 
-  $('#slider').on 'mouseup', (event)=>
+  slider.on 'mouseup', =>
     slide = false
