@@ -10,7 +10,16 @@ app.engine '.html', require('ejs').renderFile
 app.use express.static(__dirname + '/static')
 
 app.get('/', (req, res)=>
-	res.render 'index.html'
+  room_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c)=>
+    r = (Math.random() * 16|0)
+    v = (if c == 'x' then r else (r & 0x3|0x8))
+    v.toString 16
+  )
+  res.redirect "/game/#{room_id}"
+)
+
+app.get('/game/:game_id', (req, res)=>
+  res.render 'index.html'
 )
 
 players = {}
@@ -26,7 +35,7 @@ io.sockets.on 'connection', (socket) =>
   player = new games.Player()
   player.socket = socket
 
-  socket.on 'set-name', (name) ->
+  socket.on 'set-name', (name)=>
     # TODO: rework this, it sucks
     console.log "set name called with #{name}"
     if players[name]
@@ -47,10 +56,10 @@ io.sockets.on 'connection', (socket) =>
     player.game = game
     game.publishFrameState()
 
-  socket.on 'update-input', (input) ->
+  socket.on 'update-input', (input)=>
     player.updateContribution(input)
 
-  socket.on 'reset-game', (opts) ->
+  socket.on 'reset-game', (opts)=>
     {id} = opts
     console.log "Resetting game: #{id}"
     gamesMap[id]?.reset()

@@ -24,7 +24,7 @@ class Game
     @state = null
     @pointsPerFrame = 100
 
-  broadcast: (type, data) =>
+  broadcast: (type, data)=>
     console.log "Broadcast: #{type}: #{JSON.stringify(data)}"
     @sockets.in(@id).emit(type, data)
 
@@ -122,18 +122,18 @@ class Game
 
 
 class Player
-  constructor: (opts) ->
+  constructor: (opts)->
     {@socket, @game, @name} = opts ? {}
     @contribution = 0.0
     @score = 0
     @power = 1.0
 
-  updateContribution: (c) =>
+  updateContribution: (c)=>
     @contribution = c
 
 
 class Rocket
-  constructor: (opts) ->
+  constructor: (opts)->
     {@position, @angle, @velocity, @radius} = opts ? {}
     @position ?= {X: 0, Y: 0}
     @velocity ?= 10.0
@@ -148,10 +148,10 @@ class Rocket
 
 
 class Arena
-  constructor: (opts) ->
+  constructor: (opts)->
     {@radius} = opts ? {}
 
-  calculateSector: (position) ->
+  calculateSector: (position)=>
     # Return a player index for the play who owns the current sector
     {X, Y} = position
     switch
@@ -161,10 +161,10 @@ class Arena
       when X >= 0 and Y < 0 then 3
 
   # IMPORTANT: Assumes rocket is a circle
-  rocketOutOfBounds: (rocket)->
+  rocketOutOfBounds: (rocket)=>
     return (Math.pow(rocket.position.X, 2) + Math.pow(rocket.position.Y, 2)) > Math.pow((@radius - rocket.radius), 2)
 
-  bounce: (rocket) =>
+  bounce: (rocket)=>
     # Some vector calculations, based on http://stackoverflow.com/a/573206
     # Reversed rocket position is roughly perpendicular to the tangent vector
     # at the circle boundary as the rocket approaches
@@ -181,9 +181,9 @@ class Arena
     return angleNext
 
 
-dist = (v) -> Math.sqrt(Math.pow(v.e(1), 2) + Math.pow(v.e(2), 2))
-angleToVec = (angle) -> Vector.create([Math.cos(angle), Math.sin(angle)])
-angleFromVec = (v) -> Math.atan2(v.e(2), v.e(1))
+dist = (v)-> Math.sqrt(Math.pow(v.e(1), 2) + Math.pow(v.e(2), 2))
+angleToVec = (angle)-> Vector.create([Math.cos(angle), Math.sin(angle)])
+angleFromVec = (v)-> Math.atan2(v.e(2), v.e(1))
 
 test = ->
   express = require 'express'
@@ -210,6 +210,3 @@ module.exports = {
     Arena
     test
 }
-
-
-

@@ -1,7 +1,9 @@
 (function() {
-  var Gameboard, button, circle, div, form, g, gameboard, h1, img, input, li, line, rect, svg, text, ul, _ref;
+  var Gameboard, button, circle, div, form, g, gameboard, globalHeight, h1, img, input, li, line, rect, svg, text, ul, _ref;
 
   _ref = React.DOM, h1 = _ref.h1, div = _ref.div, svg = _ref.svg, rect = _ref.rect, text = _ref.text, g = _ref.g, ul = _ref.ul, li = _ref.li, form = _ref.form, input = _ref.input, button = _ref.button, img = _ref.img, circle = _ref.circle, line = _ref.line;
+
+  globalHeight = '';
 
   gameboard = null;
 
@@ -49,8 +51,9 @@
         (typeof props !== "undefined" && props !== null ? props.username : void 0) != null ? h1({}, ["'ello guvna " + this.props.username]) : null, div({
           style: {
             position: 'relative',
-            'max-width': Rocket.globals.viewport.width,
-            'max-height': Rocket.globals.viewport.height
+            width: '100%',
+            height: "" + globalHeight + "px",
+            display: 'inline-block'
           }
         }, [
           svg({
@@ -90,8 +93,12 @@
 
   "test_update = ->\n  timestamp = (new Date()).getTime() / 1000.0\n  gameboard.setprops\n    rocket:\n      position:\n        X: Math.cos(timestamp) * 200\n        Y: Math.sin(timestamp) * 200\n\nwindow.setInterval test_update, 50";
 
-  React.renderComponent(gameboard, document.getElementById('gameboard'));
-
-  this.gameboard = gameboard;
+  $((function(_this) {
+    return function() {
+      globalHeight = $(document).height() - $('#slider').height() - $('#login').height() - 100;
+      React.renderComponent(gameboard, document.getElementById('gameboard'));
+      return _this.gameboard = gameboard;
+    };
+  })(this));
 
 }).call(this);

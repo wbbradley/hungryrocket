@@ -1,13 +1,6 @@
 (function() {
-  var Server, globals, server,
+  var Server, server,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  globals = {
-    viewport: {
-      width: '320px',
-      height: '320px'
-    }
-  };
 
   Server = (function() {
     function Server(props) {
@@ -78,8 +71,6 @@
 
   this.Rocket.reset = server.reset;
 
-  this.Rocket.globals = globals;
-
   $((function(_this) {
     return function() {
       var angle, calcNumPx, center_line, indicator, setAngle, slide, slider, slider_interval;
@@ -90,7 +81,7 @@
       indicator = $("<div id='indicator'></div>");
       slider.append(indicator);
       indicator.css('left', "" + ((slider.width() - indicator.width()) / 2) + "px");
-      slider_interval = null;
+      slider_interval = slider.width() / 60;
       angle = 0;
       slide = false;
       calcNumPx = function(leftPx) {
@@ -98,7 +89,7 @@
       };
       setAngle = function(offsetX) {
         var middle;
-        middle = slider.width() / 2;
+        middle = (slider.width() - indicator.width()) / 2;
         return angle = (offsetX - middle) / middle;
       };
       setInterval(function() {
@@ -108,9 +99,9 @@
         var left;
         left = calcNumPx(indicator.css('left'));
         if (event.keyCode === 37) {
-          indicator.css('left', "" + (left - 30) + "px");
+          indicator.css('left', "" + (left - slider_interval) + "px");
         } else if (event.keyCode === 39) {
-          indicator.css('left', "" + (left + 30) + "px");
+          indicator.css('left', "" + (left + slider_interval) + "px");
         }
         return setAngle(calcNumPx(indicator.css('left')));
       });

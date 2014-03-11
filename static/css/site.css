@@ -1,6 +1,10 @@
 .foo {
   color: red;
 }
+#gameboard {
+  margin-bottom: 10px;
+  text-align: center;
+}
 #slider {
   position: relative;
   background: black;

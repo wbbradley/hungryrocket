@@ -1,5 +1,6 @@
 {h1, div, svg, rect, text, g, ul, li, form, input, button, img, circle, line} = React.DOM
 
+globalHeight = ''
 gameboard = null
 Gameboard = React.createClass
   getDefaultProps: ->
@@ -37,9 +38,10 @@ Gameboard = React.createClass
       if props?.username? then (h1 {}, ["'ello guvna #{@props.username}"]) else null
       (div {
         style:
-          position:'relative'
-          'max-width': Rocket.globals.viewport.width
-          'max-height': Rocket.globals.viewport.height
+          position: 'relative'
+          width: '100%'
+          height: "#{globalHeight}px"
+          display: 'inline-block'
         }, [
         (svg {xmlns:"http://www.w3.org/2000/svg", width:'100%', height:'100%', viewBox:@arenaViewBox()}, [
           (circle {r:@props.arena.radius, cx:0, cy:0, fill:"#f0fdf6"})
@@ -76,6 +78,7 @@ test_update = ->
 
 window.setInterval test_update, 50
 """
-React.renderComponent(gameboard, document.getElementById('gameboard'))
-
-this.gameboard = gameboard
+$ =>
+  globalHeight = $(document).height() - $('#slider').height() - $('#login').height() - 100
+  React.renderComponent(gameboard, document.getElementById('gameboard'))
+  this.gameboard = gameboard

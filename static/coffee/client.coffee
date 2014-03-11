@@ -1,8 +1,3 @@
-globals =
-	viewport:
-		width: '320px'
-		height: '320px'
-
 class Server
   constructor: (props) ->
     @props = props
@@ -42,7 +37,6 @@ server.connect()
 @Rocket = {}
 @Rocket.login = server.login
 @Rocket.reset = server.reset
-@Rocket.globals = globals
 
 $ =>
   slider = $('#slider')
@@ -55,28 +49,27 @@ $ =>
   slider.append indicator
   indicator.css 'left', "#{(slider.width() - indicator.width())/2}px"
 
-  slider_interval = null
+  slider_interval = slider.width() / 60
   angle = 0
   slide = false
 
   calcNumPx = (leftPx)=>
     Number(leftPx.slice(0, (leftPx.length - 2)))
 
-  setAngle = (offsetX)->
-    middle = slider.width() / 2
+  setAngle = (offsetX)=>
+    middle = (slider.width() - indicator.width()) / 2
     angle = ((offsetX - middle) / middle)
 
   setInterval(=>
     server.socket.emit 'update-input', angle
-    #console.log angle
   , 35)
 
   $(document).on 'keydown', (event)=>
     left = calcNumPx indicator.css('left')
     if event.keyCode == 37
-      indicator.css 'left', "#{(left - 30)}px"
+      indicator.css 'left', "#{(left - slider_interval)}px"
     else if event.keyCode == 39
-      indicator.css 'left', "#{(left + 30)}px"
+      indicator.css 'left', "#{(left + slider_interval)}px"
     setAngle calcNumPx indicator.css('left')
 
   slider.on 'mousemove', (event)=>
