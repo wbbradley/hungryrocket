@@ -57,9 +57,12 @@ $ =>
   calcNumPx = (leftPx)=>
     Number(leftPx.slice(0, (leftPx.length - 2)))
 
-  setAngle = (offsetX)=>
+  calcAngle = (offsetX)=>
     middle = (slider.width() - indicator.width()) / 2
-    angle = ((offsetX - middle) / middle)
+    ((offsetX - middle) / middle)
+
+  setAngle = (offsetX)=>
+    angle = calcAngle offsetX
 
   setInterval(=>
     server.socket.emit 'update-input', angle
@@ -68,10 +71,14 @@ $ =>
   $(document).on 'keydown', (event)=>
     left = calcNumPx indicator.css('left')
     if event.keyCode == 37
-      indicator.css 'left', "#{(left - slider_interval)}px"
+      new_angle = calcAngle (left - slider_interval)
+      if new_angle > -1
+        indicator.css 'left', "#{(left - slider_interval)}px"
     else if event.keyCode == 39
-      indicator.css 'left', "#{(left + slider_interval)}px"
-    setAngle calcNumPx indicator.css('left')
+      new_angle = calcAngle (left + slider_interval)
+      if new_angle < 1
+        indicator.css 'left', "#{(left + slider_interval)}px"
+    setAngle calcNumPx(indicator.css('left'))
 
   slider.on 'mousemove', (event)=>
     if slide and event.target.id == 'slider'

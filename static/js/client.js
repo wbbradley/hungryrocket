@@ -75,7 +75,7 @@
 
   $((function(_this) {
     return function() {
-      var angle, calcNumPx, center_line, indicator, setAngle, slide, slider, slider_interval;
+      var angle, calcAngle, calcNumPx, center_line, indicator, setAngle, slide, slider, slider_interval;
       slider = $('#slider');
       center_line = $("<div id='center_line'></div>");
       center_line.css('left', "50%");
@@ -89,21 +89,30 @@
       calcNumPx = function(leftPx) {
         return Number(leftPx.slice(0, leftPx.length - 2));
       };
-      setAngle = function(offsetX) {
+      calcAngle = function(offsetX) {
         var middle;
         middle = (slider.width() - indicator.width()) / 2;
-        return angle = (offsetX - middle) / middle;
+        return (offsetX - middle) / middle;
+      };
+      setAngle = function(offsetX) {
+        return angle = calcAngle(offsetX);
       };
       setInterval(function() {
         return server.socket.emit('update-input', angle);
       }, 35);
       $(document).on('keydown', function(event) {
-        var left;
+        var left, new_angle;
         left = calcNumPx(indicator.css('left'));
         if (event.keyCode === 37) {
-          indicator.css('left', "" + (left - slider_interval) + "px");
+          new_angle = calcAngle(left - slider_interval);
+          if (new_angle > -1) {
+            indicator.css('left', "" + (left - slider_interval) + "px");
+          }
         } else if (event.keyCode === 39) {
-          indicator.css('left', "" + (left + slider_interval) + "px");
+          new_angle = calcAngle(left + slider_interval);
+          if (new_angle < 1) {
+            indicator.css('left', "" + (left + slider_interval) + "px");
+          }
         }
         return setAngle(calcNumPx(indicator.css('left')));
       });
