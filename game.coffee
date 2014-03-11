@@ -5,17 +5,15 @@ Vector = Sylvester.Vector
 
 class Game
 
-  constructor: (opts)->
-    {@sockets, @rocket, @arena, @players} = opts ? {}
-    @id = 'uuid'
-    @arena ?= new Arena
+  constructor: (@sockets, @id)->
+    @arena = new Arena
       radius: 1000
-    @rocket ?= new Rocket
+    @rocket = new Rocket
       angle: 0.0
       position:
         X: 0.0
         Y: 0.0
-    @players ?= []
+    @players = []
 
     @maxPlayers = 1
     @inProgress = false
@@ -107,7 +105,7 @@ class Game
     @updateFrameState()
     @publishFrameState()
 
-  registerPlayer: (player) =>
+  registerPlayer: (player)=>
     if @players.length >= @maxPlayers
       throw 'Max number of players has already been reached'
 
@@ -117,7 +115,7 @@ class Game
     # start game if we have enough players
     if @players.length == @maxPlayers
       @startGame()
-    else:
+    else
       @publishFrameState()
 
 

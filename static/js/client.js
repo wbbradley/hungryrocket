@@ -50,7 +50,7 @@
       gameboard.setProps({
         username: name
       });
-      return this.socket.emit('set-name', name);
+      return this.socket.emit('set-name', name, this.props.gameID);
     };
 
     Server.prototype.update_game_state = function(game_state) {
@@ -61,7 +61,9 @@
 
   })();
 
-  server = new Server();
+  server = new Server({
+    gameID: window.location.pathname.split('/')[2]
+  });
 
   server.connect();
 

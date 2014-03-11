@@ -9,25 +9,23 @@ app.set 'views', (__dirname + '/views')
 app.engine '.html', require('ejs').renderFile
 app.use express.static(__dirname + '/static')
 
+players = {}
+gamesMap = {}
+
 app.get('/', (req, res)=>
-  room_id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c)=>
+  roomID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c)=>
     r = (Math.random() * 16|0)
     v = (if c == 'x' then r else (r & 0x3|0x8))
     v.toString 16
   )
-  res.redirect "/game/#{room_id}"
+  res.redirect "/game/#{roomID}"
 )
 
-app.get('/game/:game_id', (req, res)=>
+app.get('/game/:gameID', (req, res)=>
+  gameID = req.params.gameID
+  gamesMap[gameID] ?= new games.Game(io.sockets, gameID)
   res.render 'index.html'
 )
-
-players = {}
-gamesMap = {}
-game = new games.Game
-  sockets: io.sockets
-  name: 'Test Game'
-gamesMap[game.id] = game
 
 io.sockets.on 'connection', (socket) =>
   console.log "Connection established"
@@ -35,22 +33,23 @@ io.sockets.on 'connection', (socket) =>
   player = new games.Player()
   player.socket = socket
 
-  socket.on 'set-name', (name)=>
+  socket.on 'set-name', (name, gameID)=>
     # TODO: rework this, it sucks
     console.log "set name called with #{name}"
     if players[name]
       player = players[name]
     else
       player.name = name
-      player[name] = player
+      players[name] = player
 
-    # For now, immediately join a game
+    game = gamesMap[gameID]
     try
       game.registerPlayer(player)
     catch error
       console.log "Failed to register player: #{name}"
       return
-    socket.join(game.id)
+
+    socket.join game.id
     socket.player = player
     player.socket = socket
     player.game = game

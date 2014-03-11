@@ -26,12 +26,13 @@ class Server
 
   set_name: (name) =>
     gameboard.setProps({username: name})
-    @socket.emit 'set-name', name
+    @socket.emit 'set-name', name, @props.gameID
 
   update_game_state: (game_state) =>
     gameboard.setProps game_state
 
-server = new Server()
+server = new Server
+  gameID: window.location.pathname.split('/')[2]
 server.connect()
 
 @Rocket = {}
