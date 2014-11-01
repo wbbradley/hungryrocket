@@ -29,5 +29,8 @@
     "grunt-contrib-watch": "~0.5.3",
     "lodash": "~2.4.1",
     "sylvester": "0.0.21"
+  },
+  "devDependencies": {
+    "grunt-cli": "^0.1.13"
   }
 }
