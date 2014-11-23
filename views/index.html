@@ -33,24 +33,11 @@
 				return (a - p1) / (p2 - p1);
 			};
 			Math.clamp = Math.clamp || function(a, p1, p2) {
-				if (p2 > p1) {
-					if (a < p1) {
-						return p1;
-					} else if (a > p2) {
-						return p2;
-					} else {
-						return a;
-					}
-				} else {
-					if (a < p2) {
-						return p2;
-					} else if (a > p1) {
-						return p1;
-					} else {
-						return a;
-					}
+				if (p2 < p1) {
+					return Math.clamp(a, p2, p1);
 				}
-			};
+				return Math.max(p1, Math.min(p2, a));
+			}
 		</script>	
 	</body>
 </html>
