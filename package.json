@@ -21,14 +21,15 @@
   },
   "homepage": "https://github.com/wbbradley/hungryrocket",
   "dependencies": {
-    "socket.io": "0.9.16",
-    "express": "3.4.7",
     "ejs": "0.8.5",
+    "express": "3.4.7",
     "grunt": "~0.4.2",
     "grunt-contrib-coffee": "~0.10.1",
     "grunt-contrib-less": "~0.9.0",
     "grunt-contrib-watch": "~0.5.3",
     "lodash": "~2.4.1",
+    "node-uuid": "^1.4.1",
+    "socket.io": "0.9.16",
     "sylvester": "0.0.21"
   },
   "devDependencies": {
